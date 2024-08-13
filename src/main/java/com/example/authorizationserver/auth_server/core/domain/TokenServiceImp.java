@@ -10,8 +10,5 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class TokenServiceImp implements TokenService {
-    private final OAuth2AuthorizationService authorizationService;
-    private final OAuth2TokenGenerator<OAuth2Token> tokenGenerator;
-    private final RegisteredClientRepository registeredClientRepository;
 
 }

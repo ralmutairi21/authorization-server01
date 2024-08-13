@@ -18,10 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class TokenController {
 
-    private final OAuth2AuthorizationService authorizationService;
-    private final OAuth2TokenGenerator<OAuth2Token> tokenGenerator;
-    private final RegisteredClientRepository registeredClientRepository;
-
 
     @PostMapping
     public ResponseEntity<Void> takeToken(@RequestHeader("Authorization") String token){
