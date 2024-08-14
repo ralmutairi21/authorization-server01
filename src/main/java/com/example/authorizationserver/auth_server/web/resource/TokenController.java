@@ -8,20 +8,16 @@ import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/token")
 @AllArgsConstructor
 public class TokenController {
 
 
-    @PostMapping
-    public ResponseEntity<Void> takeToken(@RequestHeader("Authorization") String token){
-
-        return ResponseEntity.ok().build();
+    @GetMapping("hello")
+    public ResponseEntity<String> takeToken(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok().body("Hello ALl");
     }
 }

@@ -97,7 +97,7 @@ public class SecurityConfig {
         RegisteredClient registerClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("demo-client")
                 .clientSecret("{noop}secret")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 //                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
@@ -108,7 +108,35 @@ public class SecurityConfig {
 //                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
-        return new InMemoryRegisteredClientRepository(registerClient);
+        RegisteredClient client1 = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("client1")
+                .clientSecret("{noop}secret")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .redirectUri("http://localhost:9000/api/tokenhello")
+//                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scopes(scopeConfig -> scopeConfig.addAll(List.of(OidcScopes.OPENID, "ADMIN", "USER")))
+                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(10))
+                        .refreshTokenTimeToLive(Duration.ofHours(10)).reuseRefreshTokens(false)
+                        .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED).build())
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .build();
+
+        RegisteredClient client2 = RegisteredClient.withId(UUID.randomUUID().toString())
+                .clientId("client2")
+                .clientSecret("{noop}secret")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+//                .postLogoutRedirectUri("http://127.0.0.1:8080/")
+                .scopes(scopeConfig -> scopeConfig.addAll(List.of(OidcScopes.OPENID, "ADMIN", "USER")))
+                .tokenSettings(TokenSettings.builder().accessTokenTimeToLive(Duration.ofMinutes(10))
+                        .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED).build())
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .build();
+        return new InMemoryRegisteredClientRepository(registerClient, client1, client2);
     }
 
     // the purpose of this bean is to create public/private keys during the startup
