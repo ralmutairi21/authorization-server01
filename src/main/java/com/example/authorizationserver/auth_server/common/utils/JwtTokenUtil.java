@@ -1,11 +1,11 @@
-package com.example.authorizationserver.common.utils;
+package com.example.authorizationserver.auth_server.common.utils;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtTokenUtil {
 
-    private String secretKey = "your-secret-key";
+    private String secretKey = "secret";
 
     public String generateToken(String subject) {
         return Jwts.builder()

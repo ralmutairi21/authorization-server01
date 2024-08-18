@@ -32,7 +32,6 @@ public class TokenController {
         OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
         String username = oidcUser.getPreferredUsername();
 
-        // Here you can add any post-login logic you need
         return "Login successful! Welcome, " + username;
     }
 }
