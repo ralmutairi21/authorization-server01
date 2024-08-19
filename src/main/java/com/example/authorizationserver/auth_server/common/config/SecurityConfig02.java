@@ -65,14 +65,12 @@ public class SecurityConfig02 {
                 // from the authorization endpoint
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
-                                new LoginUrlAuthenticationEntryPoint("http://localhost:8090/login/oauth2/code/keycloak"),
+                                new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/keycloak"),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
                 )
-                .oauth2Login(oauth2Login ->
-                        oauth2Login
-                                .defaultSuccessUrl("/loginSuccess") // redirect here after successful login
-                )
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+
                 .build();
     }
 
@@ -96,6 +94,7 @@ public class SecurityConfig02 {
                 .clientSecret("{noop}secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
                 .redirectUri("http://localhost:8082/login/oauth2/code/spring")
                 .scopes(scopeConfig -> scopeConfig.addAll(List.of(OidcScopes.OPENID, "profile", "email")))
                 .tokenSettings(TokenSettings.builder()
@@ -113,6 +112,7 @@ public class SecurityConfig02 {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(AuthorizationGrantType.JWT_BEARER) // Enable JWT Bearer for token exchange
                 .redirectUri("http://localhost:8082/login/oauth2/code/spring")
                 .scope(OidcScopes.OPENID).scope(OidcScopes.EMAIL)
                 .clientSettings(ClientSettings.builder().requireProofKey(true).build())
