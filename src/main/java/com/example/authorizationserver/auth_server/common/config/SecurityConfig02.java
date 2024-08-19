@@ -37,6 +37,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -48,6 +51,8 @@ import java.util.UUID;
 
 @Configuration
 public class SecurityConfig02 {
+
+    private final String tokenUri = "http://localhost:8080/auth/realms/auth-server/protocol/openid-connect/token";
 
     @Bean
     @Order(1)
@@ -90,9 +95,7 @@ public class SecurityConfig02 {
                 .clientId("web-client")
                 .clientSecret("{noop}secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("http://localhost:8082/login/oauth2/code/spring")
                 .scopes(scopeConfig -> scopeConfig.addAll(List.of(OidcScopes.OPENID, "profile", "email")))
                 .tokenSettings(TokenSettings.builder()
@@ -168,10 +171,24 @@ public class SecurityConfig02 {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    public WebClient webClient() {
+        return WebClient.builder().build();
     }
 
+    public Mono<OAuth2AccessTokenResponse> exchangeCodeForToken(String code) {
+        return webClient()
+                .post()
+                .uri(tokenUri)
+                .headers(headers -> {
+                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+                    headers.setBasicAuth("auth-server-client", "bUFOUIxhP1PwgfyLHxeEjUjpTP3bxl84");
+                })
+                .body(BodyInserters.fromFormData("grant_type", "authorization_code")
+                        .with("code", code)
+                        .with("redirect_uri", "http://localhost:8090/login/oauth2/code/keycloak"))
+                .retrieve()
+                .bodyToMono(OAuth2AccessTokenResponse.class);
+    }
 
 
 }

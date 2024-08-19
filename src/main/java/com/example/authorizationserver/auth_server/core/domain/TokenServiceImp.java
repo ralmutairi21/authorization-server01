@@ -3,6 +3,7 @@ package com.example.authorizationserver.auth_server.core.domain;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -13,19 +14,14 @@ import java.util.Map;
 @AllArgsConstructor
 public class TokenServiceImp implements TokenService {
 
-    private final String secretKey = "your-secret-key"; // Replace with your secret key
-    private final long expirationTime = 3600_000; // 1 hour in milliseconds
+    public String generateToken(OAuth2AccessTokenResponse keycloakTokenResponse) {
+        // Extract the access token from Keycloak's response
+        String keycloakAccessToken = keycloakTokenResponse.getAccessToken().getTokenValue();
 
-    public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", "USER"); // Example of adding a custom claim
+        // Logic to create a custom token, for example, a JWT with additional claims
+        // Here, I'm just returning the Keycloak token as an example
+        // In a real application, you'd likely sign a new JWT with custom claims
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(username)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .compact();
+        return keycloakAccessToken;  // Replace with your own custom token generation logic
     }
 }
