@@ -2,15 +2,13 @@ package com.example.authorizationserver.auth_server.common.config;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -18,11 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -36,10 +31,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -52,7 +43,6 @@ import java.util.UUID;
 @Configuration
 public class SecurityConfig02 {
 
-    private final String tokenUri = "http://localhost:8080/auth/realms/auth-server/protocol/openid-connect/token";
 
     @Bean
     @Order(1)
@@ -94,7 +84,7 @@ public class SecurityConfig02 {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://localhost:8082/login/oauth2/code/spring")
+                .redirectUri("http://localhost:8081/get")
                 .scopes(scopeConfig -> scopeConfig.addAll(List.of(OidcScopes.OPENID, "profile", "email")))
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofHours(10))
@@ -167,26 +157,6 @@ public class SecurityConfig02 {
                 .build();
 
         return new InMemoryUserDetailsManager(user);
-    }
-
-    @Bean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
-
-    public Mono<OAuth2AccessTokenResponse> exchangeCodeForToken(String code) {
-        return webClient()
-                .post()
-                .uri(tokenUri)
-                .headers(headers -> {
-                    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    headers.setBasicAuth("auth-server-client", "bUFOUIxhP1PwgfyLHxeEjUjpTP3bxl84");
-                })
-                .body(BodyInserters.fromFormData("grant_type", "authorization_code")
-                        .with("code", code)
-                        .with("redirect_uri", "http://localhost:8090/login/oauth2/code/keycloak"))
-                .retrieve()
-                .bodyToMono(OAuth2AccessTokenResponse.class);
     }
 
 
