@@ -38,6 +38,7 @@ public class AuthorizationServerConfiguration {
                 .exceptionHandling(exceptions ->
                         exceptions.authenticationEntryPoint(
                                 new LoginUrlAuthenticationEntryPoint("/oauth2/authorization/keycloak")
+//                                new LoginUrlAuthenticationEntryPoint("/login")
                         )
                 );
 //        http
@@ -49,8 +50,6 @@ public class AuthorizationServerConfiguration {
 //                                .authenticationProvider(daoAuthenticationProvider)
 //                )
 //                .oidc(Customizer.withDefaults()); // Enable OpenID Connect 1.0
-
-
         return http.build();
     }
 
