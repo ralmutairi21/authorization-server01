@@ -28,38 +28,38 @@ import java.util.UUID;
 public class TokenConfiguration {
 
 
-    @Bean
-    public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(
-            OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer
-    ) {
-        OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
-        accessTokenGenerator.setAccessTokenCustomizer(accessTokenCustomizer);
-        OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
-
-        return new DelegatingOAuth2TokenGenerator(
-                accessTokenGenerator, refreshTokenGenerator
-        );
-    }
-
-    @Bean
-    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer () {
-        return context -> {
-            UserDetails userDetails = null;
-
-            if (context.getPrincipal() instanceof OAuth2ClientAuthenticationToken) {
-                userDetails = (UserDetails) context.getPrincipal().getDetails();
-            } else if (context.getPrincipal() instanceof AbstractAuthenticationToken) {
-                userDetails = (UserDetails) context.getPrincipal().getPrincipal();
-            } else {
-                throw new IllegalStateException("Unexpected token type");
-            }
-
-
-            context.getClaims()
-                    .claim(
-                            "username", "tesstt"
-                    );
-        };
-    }
+//    @Bean
+//    public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator(
+//            OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer
+//    ) {
+//        OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
+//        accessTokenGenerator.setAccessTokenCustomizer(accessTokenCustomizer);
+//        OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+//
+//        return new DelegatingOAuth2TokenGenerator(
+//                accessTokenGenerator, refreshTokenGenerator
+//        );
+//    }
+//
+//    @Bean
+//    public OAuth2TokenCustomizer<OAuth2TokenClaimsContext> accessTokenCustomizer () {
+//        return context -> {
+//            UserDetails userDetails = null;
+//
+//            if (context.getPrincipal() instanceof OAuth2ClientAuthenticationToken) {
+//                userDetails = (UserDetails) context.getPrincipal().getDetails();
+//            } else if (context.getPrincipal() instanceof AbstractAuthenticationToken) {
+//                userDetails = (UserDetails) context.getPrincipal().getPrincipal();
+//            } else {
+//                throw new IllegalStateException("Unexpected token type");
+//            }
+//
+//
+//            context.getClaims()
+//                    .claim(
+//                            "username", "tesstt"
+//                    );
+//        };
+//    }
 }
 
