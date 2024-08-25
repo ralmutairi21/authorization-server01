@@ -1,4 +1,4 @@
-package com.example.authorizationserver.common.annotation;
+package com.example.authorizationserver.auth_server.common.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface Action {
+public @interface Validator {
     @AliasFor(
             annotation = Component.class
     )
